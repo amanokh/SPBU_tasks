@@ -11,7 +11,7 @@ int main() {
     char lastChar = NULL;
     string numBuff = "";
     regex r("[\\-\\/+^()*=]");
-    freopen("task6.txt", "r", stdin);
+    freopen("input.txt", "r", stdin);
 
     cout << "RPN: ";
     while (cin.get(c)) {
