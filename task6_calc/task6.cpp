@@ -21,7 +21,7 @@ int main() {
             operators.push(c);
         } else {
             string s(1, c);
-            if (c == 'e') {                     //получаем вещественную часть
+            if (c == 'e') {                     //РїРѕР»СѓС‡Р°РµРј РІРµС‰РµСЃС‚РІРµРЅРЅСѓСЋ С‡Р°СЃС‚СЊ
                 char e[5];
                 e[0] = 'e';
                 e[4] = '\0';
@@ -29,15 +29,15 @@ int main() {
                 cin.get(e[2]);
                 cin.get(e[3]);
                 numBuff += e;
-            } else if (regex_match(s, r)) {             //получаем знак (скобки, +-*/^=)
-                if (numBuff != "") {                    //сбрасываем числовой буфер
+            } else if (regex_match(s, r)) {             //РїРѕР»СѓС‡Р°РµРј Р·РЅР°Рє (СЃРєРѕР±РєРё, +-*/^=)
+                if (numBuff != "") {                    //СЃР±СЂР°СЃС‹РІР°РµРј С‡РёСЃР»РѕРІРѕР№ Р±СѓС„РµСЂ
                     numbers.push(stof(numBuff));
                     cout << numBuff << " ";
                     numBuff = "";
                 }
                 char lastOperation = operators.get();
 
-                if (c == ')') {                         //прорешиваем все до скобки
+                if (c == ')') {                         //РїСЂРѕСЂРµС€РёРІР°РµРј РІСЃРµ РґРѕ СЃРєРѕР±РєРё
                     while (lastOperation != '(') {
                         operators.pop();
                         double a = numbers.pull(), b = numbers.pull();
@@ -46,7 +46,7 @@ int main() {
                         lastOperation = operators.get();
                     }
                     operators.pop();
-                } else if (c == '*' || c == '/') {        //прорешиваем выскокоприоритетные *, /, ^
+                } else if (c == '*' || c == '/') {        //РїСЂРѕСЂРµС€РёРІР°РµРј РІС‹СЃРєРѕРєРѕРїСЂРёРѕСЂРёС‚РµС‚РЅС‹Рµ *, /, ^
                     while (lastOperation == '*' || lastOperation == '/' || lastOperation == '^') {
                         operators.pop();
                         double a = numbers.pull(), b = numbers.pull();
@@ -55,7 +55,7 @@ int main() {
                         lastOperation = operators.get();
                     }
                     operators.push(c);
-                } else if (c == '+' || c == '-') {        //прорешиваем выскокоприоритетные *, /, ^, +, -
+                } else if (c == '+' || c == '-') {        //РїСЂРѕСЂРµС€РёРІР°РµРј РІС‹СЃРєРѕРєРѕРїСЂРёРѕСЂРёС‚РµС‚РЅС‹Рµ *, /, ^, +, -
                     if (lastChar == '(' && c == '-') {
                         numbers.push(0);
                         cout << 0 << " ";
@@ -70,7 +70,7 @@ int main() {
                         }
                     }
                     operators.push(c);
-                } else if (c == '=') {                    //прорешиваем всё
+                } else if (c == '=') {                    //РїСЂРѕСЂРµС€РёРІР°РµРј РІСЃС‘
                     while (lastOperation) {
                         operators.pop();
                         double a = numbers.pull(), b = numbers.pull();
@@ -79,10 +79,10 @@ int main() {
                         lastOperation = operators.get();
                     }
                     operators.push(c);
-                } else {                                  //поступает '(' или '^' - выше по приоритету ничего нет
+                } else {                                  //РїРѕСЃС‚СѓРїР°РµС‚ '(' РёР»Рё '^' - РІС‹С€Рµ РїРѕ РїСЂРёРѕСЂРёС‚РµС‚Сѓ РЅРёС‡РµРіРѕ РЅРµС‚
                     operators.push(c);
                 }
-            } else {                                    //получаем число
+            } else {                                    //РїРѕР»СѓС‡Р°РµРј С‡РёСЃР»Рѕ
                 numBuff += c;
             }
             lastChar = c;
