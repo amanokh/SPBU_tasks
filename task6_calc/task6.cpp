@@ -1,4 +1,5 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <regex>
 #include "task6.h"
 
 using namespace std;

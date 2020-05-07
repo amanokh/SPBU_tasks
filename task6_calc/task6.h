@@ -4,7 +4,9 @@
 
 #ifndef SPBUTASKS2020_TASK6_H
 #define SPBUTASKS2020_TASK6_H
-#include <bits/stdc++.h>
+#include <iostream>
+#include <cmath>
+
 
 template <class T>
 struct List {
@@ -68,6 +70,8 @@ double calculate(double b, double a, char operation) {
             return a / b;
         case '^':
             return pow(a, b);
+        default:
+            return 0;
     }
-}
+};
 #endif //SPBUTASKS2020_TASK6_H
