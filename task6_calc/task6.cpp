@@ -1,5 +1,6 @@
 #include <iostream>
 #include <regex>
+#include <cstdio>
 #include "task6.h"
 
 using namespace std;
