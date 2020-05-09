@@ -33,15 +33,19 @@ public:
         a = tmp;
     }
     T pull(){
+        List<T> *b = a;
         T data = a->data;
         a = a->next;
+        delete b;
         return data;
     }
     T get(){
         return a->data;
     }
     void pop(){
+        List<T> *b = a;
         a = a->next;
+        delete b;
     }
     void print(){
         List<T> *b = a;
