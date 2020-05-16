@@ -8,7 +8,6 @@ using namespace std;
 int main() {
     Stack<int> numbers{};
     Stack<char> operators{};
-
     char c;
     regex r("[!*+()=]");
     freopen("input.txt", "r", stdin);
