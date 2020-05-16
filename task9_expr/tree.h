@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include "link.h"
 
 #ifndef SPBUTASKS2020_TASK8_H
 #define SPBUTASKS2020_TASK8_H
@@ -8,33 +9,17 @@
 
 using namespace std;
 
-struct link {
-    int key;
-    int weight;
-    link *left, *right;
-};
-
 class Tree {
     link *head = nullptr;
 public:
-    Tree() = default;
+    Tree(link *a);
 
-    void push(int x);
-    void pop(int x);
-    void show();
-    void showW();
-    void print();
-    void printInd();
+    void show();            //вывод дерева в консоль
+    void print();           //печать ОПН обходом post-order
+    int solve();            //решение выражения рекурсивным обходом по дереву
 
 private:
-    link *max(link *a);
-    link *min(link *a);
-
-    void pushInternal(link **a, int x, int level);
-    link *popInternal(link *a, int x);
-
-    void printInternal(link *a);
-    void printInternalInd(link *a);
     void showInternal(link *a, int n);
-    void showInternalW(link *a, int n);
+    void printInternal(link *a);
+    int solveInternal(link *a);
 };

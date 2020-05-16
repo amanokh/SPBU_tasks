@@ -1,4 +1,5 @@
 #include "stack.h"
+#include "link.h"
 #include <iostream>
 #include <cmath>
 
@@ -48,15 +49,25 @@ void Stack<T>::print() {
     std::cout << std::endl;
 }
 
-double calculate(int a, int b, char operation) {
+link* connect(link *a, link *b, char operation) {
+    link *tmp = new link;
     switch (operation) {
         case '+':
-            return a || b;
+            tmp->key = operation;
+            tmp->left = a;
+            tmp->right = b;
+            return tmp;
         case '*':
-            return a && b;
+            tmp->key = operation;
+            tmp->left = a;
+            tmp->right = b;
+            return tmp;
         case '!':
-            return !a;
+            tmp->key = operation;
+            tmp->left = a;
+            tmp->right = nullptr;
+            return tmp;
         default:
-            return 0;
+            return nullptr;
     }
 };

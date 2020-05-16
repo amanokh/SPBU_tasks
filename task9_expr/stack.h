@@ -21,8 +21,8 @@ private:
 public:
     Stack();
 
-    T pull();
-    T get();
+    T pull();               //получить элемент и удалить
+    T get();                //получить элемент
 
     void push(T num);
     void pop();
@@ -30,7 +30,7 @@ public:
 
 };
 
-double calculate(int a, int b, char operation);
+link *connect(link *a, link *b, char operation);  //создать поддерево, где вершина - операция
 
 #include "stack.inc"
 #endif
