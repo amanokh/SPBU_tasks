@@ -67,8 +67,16 @@ link *Tree::popInternal(link *a, int x) {
             a->key = max(a->left)->key;
             a->weight = max(a->left)->weight;
             a->left = popInternal(a->left, a->key);
-        } else if (a->left) return a->left;
-        else if (a->right) return a->right;
+        } else if (a->left) {
+            link *tmp = a->left;
+            delete(a);
+            return tmp;
+        }
+        else if (a->right) {
+            link *tmp = a->right;
+            delete(a);
+            return tmp;
+        }
         else return nullptr;
     }
     return a;
