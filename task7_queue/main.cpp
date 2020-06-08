@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <iostream>
 #include <time.h>
 #include "queue.h"
@@ -11,98 +10,100 @@ double fRand() {
 }
 
 int main() {
-    List list{};
+    Queue queue{};
     srand(time(0));
 
-    int k,m;                        // ограничения на Т1, Т2
-    int requests = 1000;            // количество заявок
+    int k, m;                        // ограничения на Т1, Т2
+    int tasks = 1000;                // количество заявок
 
+    int maxDelayID, maxDelayIters;   //хранение заявки с макс. ожиданием
+    double maxDelay = 0.;
+
+    double globalTime = 0.;         //общее время "системы"
+    double workingTimeOA = 0.;      //общее время ОА в состоянии обработки
+    double lastEnterTime = 0.;      //время прихода последней заявки
+
+    int enteredTasks = 0;           //кол-во пришедших заявок в "систему"
+    int finishedTasks = 0;          //кол-во вышедших заявок из "системы"
+    int handledTasksOA = 0;         //общее кол-во обработанных в ОА заявок
+
+    double totalT1 = 0.;            //общее время задержки между приходами заявок
+    double T1, T2;
+
+    //принимаем данные на ввод
     cout << "Enter T1, T2: ";
     cin >> k >> m;
 
-    int T1 = fRand() * k;
-    int T2;
+    //генерируем первую заявку
+    T1 = fRand() * k;
+    lastEnterTime += T1;
+    queue.push(lastEnterTime, enteredTasks + 1, 1);
+    enteredTasks++;
+    totalT1 += T1;
 
-    int currTime = 0;               // текущее время
+    bool isRepeat;     //булеан - возвращать заявку обратно в очередь или нет
+    while (finishedTasks < tasks) {
+        //получаем данные обрабатываемой заявки
+        task *currentTask = queue.getHead();
+        double cTaskTime = currentTask->enterTime;
+        int cTaskIters = currentTask->iters;
+        int cTaskID = currentTask->id;
 
-    int countFinished = 0;          // количество вышедших заявок
-    int maxDelay = -1;              // максимальное время ожидания
-    int works = 0;                  // количество обработанных заявок в ОА
-    unsigned long pendingTime = 0;  // общее время ожидания ОА
-    unsigned long workTime = 0;     // общее время ожидания перед ОА
-    unsigned long delayTime = T1;   //общее время ожидания Т1
+        isRepeat = false;
 
-    link *maxID = nullptr;          //заявка с макс. временем ожидания
-
-    int id = 0;
-    int empty = 1;                  // пустой ли список
-
-
-    while (countFinished < requests) {
-        //Генерируем Т2, если очередь не пуста
-        if (empty && list.count() > 0) {
+        //обрабатываем заявку
+        if (cTaskTime <= globalTime) {
             T2 = fRand() * m;
-            pendingTime += T2;
-            empty = 0;
-        }
+            globalTime += T2;
+            workingTimeOA += T2;
+            handledTasksOA++;
 
-        //Генерируем заявку, ставим в очередь
-        while (T1 == 0) {
-            list.push(currTime, id);
-            id++;
-
-            T1 = fRand() * k;
-            delayTime += T1;
-        }
-
-        //Обрабатываем заявки в ОА -> перемещаем отработанные в конец очереди -> снова генеириуем Т2
-        while (T2 == 0) {
-            //ищем ячейку с макс. ожиданием
-            if (currTime - list.head->enterTime > maxDelay) {
-                maxID = list.head;
-                maxDelay = currTime - list.head->enterTime;
+            //определяем заявку с макс.ожиданием своей обработки
+            if (globalTime - cTaskTime > maxDelay) {
+                maxDelay = globalTime - cTaskTime;
+                maxDelayID = cTaskID;
+                maxDelayIters = cTaskIters;
             }
 
-            //обновляем счетчики
-            works++;
-            workTime += currTime - list.head->enterTime;
-
-            //проверяем, отработала ли заявка 4 раза
-            if (list.head->count < 3) list.work(currTime);
+            //возвращаем в очередь, если обработана менее 4 раз
+            if (cTaskIters < 4) isRepeat = true;
             else {
-                countFinished++;
-                if (currTime - list.head->enterTime > maxDelay) {
-                    maxID = list.head;
-                    maxDelay = currTime - list.head->enterTime;
-                }
-                list.pop();
-                if (countFinished % 100 == 0) {
-                    cout << "*****" << countFinished << "*****" << endl;
-                    cout << "Entered requests (total): " << id << endl;
-                    cout << "Request ID with max delay: " << maxID->id << endl;
-                    cout << "Queue || length: " << list.count() << ", max time in queue: " << maxDelay << ", average: "
-                         << workTime / works << endl;
+                finishedTasks++;
+                if (finishedTasks % 100 == 0) {
+                    cout << "***** " << finishedTasks << " completed *****" << endl;
+                    cout << "Entered requests (total): " << enteredTasks << endl;
+                    cout << "Queue || length: " << queue.count() - 1 << ", average delay: "
+                         << workingTimeOA / finishedTasks << ", max: " << maxDelay << " (ID=" << maxDelayID << ", iter="
+                         << maxDelayIters << ")" << endl << endl;
                 }
             }
 
-            if (list.count() == 0) {
-                T2 = -1;
-                empty = 1;
-            } else {
-                T2 = fRand() * m;
-                pendingTime += T2;
-            }
+            queue.pop();
+
+        } else {
+            globalTime = cTaskTime; //продвигаем общее время на момент входа очередной заявки в ОА
         }
 
-        //тикаем время
-        currTime++;
-        if (id < requests) T1--;
-        if (!empty) T2--;
+        //генерируем новые заявки, пришедшие за время обработки другой в ОА
+        while (lastEnterTime <= globalTime && enteredTasks < tasks) {
+            T1 = fRand() * k;
+            lastEnterTime += T1;
+            queue.push(lastEnterTime, enteredTasks + 1, 1);
+            enteredTasks++;
+            totalT1 += T1;
+        }
+
+        //возвращаем окончившую обработку заявку, если требуется
+        if (isRepeat) queue.push(globalTime, cTaskID, cTaskIters + 1);
     }
 
-    cout << "************" << endl << "Average time T1: " << delayTime / id << endl;
-    cout << "Time     || building: " << currTime << ", idle: " << currTime - pendingTime << endl;
-    cout << "Requests || in: " << id << ", out: " << countFinished << ", total handled: " << works << endl;
+    cout << "************" << endl << "Average time T1: " << totalT1 / tasks << endl;
+    cout << "Time total: " << globalTime << endl << endl;
+    cout << "OA time  || working: " << workingTimeOA << ", idle: "
+         << globalTime - workingTimeOA << endl;
+    cout << "Requests || in: " << enteredTasks << ", out: " << finishedTasks << ", total handled (in OA): " << handledTasksOA
+         << endl;
+
 }
 
 

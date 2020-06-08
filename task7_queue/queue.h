@@ -1,25 +1,25 @@
 //
-// Created by amano on 31.05.2020.
+// Created by amano on 08.06.2020.
 //
 
 #ifndef TASK7_QUEUE_H
 #define TASK7_QUEUE_H
-struct link {
-    int count;
-    int enterTime;
+struct task {
+    int iters;
+    double enterTime;
     int id;
-    link *next, *prev;
+    task *next, *prev;
 };
 
-class List {
+class Queue {
+private:
+    task *head, *tail;
 public:
-    link *head, *tail;
-    List();
+    Queue();
 
-    void push(int, int);
-    void work(int);
+    void push(double enterTime, int id, int iters);
     void pop();
+    task* getHead();
     int count();
 };
-
 #endif //TASK7_QUEUE_H

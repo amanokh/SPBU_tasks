@@ -1,61 +1,58 @@
 //
-// Created by amano on 31.05.2020.
+// Created by amano on 08.06.2020.
 //
 #include <iostream>
 #include "queue.h"
 
 using namespace std;
 
-List::List() {
+Queue::Queue() {
     head = nullptr;
     tail = nullptr;
 }
 
-void List::push(int enterTime, int id) {
-    link *temp = new link;
-    temp->next = nullptr;
+void Queue::push(double enterTime, int id, int iters) {
+    task *temp = new task;
+    temp->next = tail;
+    temp->prev = nullptr;
     temp->enterTime = enterTime;
-    temp->count = 0;
+    temp->iters = iters;
     temp->id = id;
 
-    if (head != nullptr) {
-        temp->prev = tail;
-        tail->next = temp;
+    if (!head) {
+        head = temp;
         tail = temp;
     } else {
-        temp->prev = nullptr;
-        head = tail = temp;
+        tail->prev = temp;
+        tail = temp;
     }
 }
 
-void List::work(int enterTime) {
-    tail->next = head;
-    head = head->next;
-    tail = tail->next;
-    tail->next = nullptr;
-    tail->count++;
-    tail->enterTime = enterTime;
-}
-
-void List::pop() {
-    head->count++;
-    if (head->next)
-        head = head->next;
-    else {
+void Queue::pop() {
+    if (head->prev){
+        task *temp = head;
+        head = head->prev;
+        head->next = nullptr;
+        delete(temp);
+    } else {
+        delete(head);
         head = nullptr;
         tail = nullptr;
     }
 }
 
-int List::count() {
-    int count = 1;
-    if (!head)
-        return 0;
-    link *temp = head;
-    while (temp != tail && temp) {
-        temp = temp->next;
+int Queue::count() {
+    int count = 0;
+    task *temp = head;
+
+    while (temp) {
+        temp = temp->prev;
         count++;
     }
     return count;
+}
+
+task *Queue::getHead() {
+    return head;
 }
 
