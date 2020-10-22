@@ -13,15 +13,17 @@ private:
 public:
     Polynom(int order, int n);
 
-    Polynom(std::vector<int> &deg);
+    explicit Polynom(std::vector<int> &deg);
 
     Polynom(std::initializer_list<int> list);
 
     Polynom(const std::vector<int> &a);
 
-    int size() const;
+    [[nodiscard]] int size() const;
 
     void print();
+
+    void printCanonic();
 
     ~Polynom();
 
@@ -30,6 +32,12 @@ public:
     friend Polynom operator*(const Polynom &a, const Polynom &b);
 
     friend Polynom operator-(const Polynom &a, const Polynom &b);
+
+    friend bool operator==(const Polynom &a, const Polynom &b);
+
+    friend Polynom operator*(int a, const Polynom &b);
+
+    Polynom();
 };
 
 
