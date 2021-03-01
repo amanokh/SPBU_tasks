@@ -26,7 +26,7 @@ def d_func(x):
     return -4 * math.sin(x) + 0.3
 
 
-def root_division(a, b, func, n = 100): # деление корней
+def root_division(a, b, func, n = 50): # деление корней
     sections = []
 
     step = 0
@@ -130,15 +130,15 @@ def transversal(a, b, eps, func, iter = 100):   # приближение мет�
 
 def parse_answer(solution):
     if solution.is_found:
-        print("Приближённое решение: %f\n"
+        print("Приближённое решение: %.12f\n"
               "Количество шагов: %d\n"
               "Начальные приближения: %s\n"
               "Последняя абс. погрешность |x_m - x_m-1|: %f\n"
-              "Абсолютная величина невязки |f(x) - 0|: %f" % (solution.solution,
+              "Абсолютная величина невязки |f(x) - 0|: %.12f" % (solution.solution,
                                                               solution.steps,
                                                               str(solution.init_approx),
-                                                              solution.abs_error,
-                                                              solution.func_solve))
+                                                              abs(solution.abs_error),
+                                                              abs(solution.func_solve)))
     else:
         print("Превышено допустимое число итераций (%s)!" % solution.err_name)
 
@@ -146,35 +146,36 @@ def parse_answer(solution):
 if __name__ == '__main__':
     a = -15
     b = 5
-    eps = 0.00001
+    eps = 0.0000000001
+    n = 50
 
-    sections = root_division(a, b, func)
+    sections = root_division(a, b, func, n)
 
     print("Численные методы решения нелинейных уравнений\n\n"
           "Вид уравнения: 4 * cos(x) + 0.3 * x\n"
-          "A = %d, B = %d, eps = %d\n" % (a, b, eps))
+          "A = %d, B = %d, eps = %f, n = %d\n" % (a, b, eps, n))
     print("---Отделение корней (%d корней)---" % len(sections))
 
     for sect_num in range(len(sections)):
         print("%d) %s" % (sect_num + 1, str(sections[sect_num])))
 
-    n = int(input("\nВведите номер отрезка: "))
+    for sect_num in range(len(sections)):
+        print("\n\n*** Отрезок %d: %s ***\n" % (sect_num+1, str(sections[sect_num])))
+        a = sections[sect_num][0]
+        b = sections[sect_num][1]
 
-    a = sections[n - 1][0]
-    b = sections[n - 1][1]
+        print("---Метод бисекции---")
+        ans = bisect(a, b, eps, func)
+        parse_answer(ans)
 
-    print("\n---Метод бисекции---")
-    ans = bisect(a, b, eps, func)
-    parse_answer(ans)
+        print("---Метод Ньютона---")
+        ans = newton(a, b, eps, func, d_func)
+        parse_answer(ans)
 
-    print("\n---Метод Ньютона---")
-    ans = newton(a, b, eps, func, d_func)
-    parse_answer(ans)
+        print("---Метод Ньютона (модифицированный)---")
+        ans = newton_m(a, b, eps, func, d_func)
+        parse_answer(ans)
 
-    print("\n---Метод Ньютона (модифицированный)---")
-    ans = newton_m(a, b, eps, func, d_func)
-    parse_answer(ans)
-
-    print("\n---Метод секущих---")
-    ans = transversal(a, b, eps, func)
-    parse_answer(ans)
+        print("---Метод секущих---")
+        ans = transversal(a, b, eps, func)
+        parse_answer(ans)
