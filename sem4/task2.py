@@ -24,7 +24,8 @@ class Root:
 
 
 def func(x):
-    return 2 * math.sin(x) - pow(x, 2) / 2
+     return 2 * math.sin(x) - pow(x, 2) / 2
+    #return pow(x, 2) -3*x+5
 
 
 def tabulate_value(a, b, m, func):
@@ -94,9 +95,9 @@ def solve_request(table):
     print("\nОтсортированная таблица:")
     print_table(sorted_table, show_distance=True)
 
-    n = int(input("\n\033[0m\033[1mВведите степень многочлена n <= %d: \033[0m" % m))
+    n = int(input("\n\033[0m\033[1mВведите степень многочлена n < %d: \033[0m" % m))
 
-    while n > m:
+    while n >= m:
         n = int(input("\033[91mНедопустимое значение! \033[0m\033[1mВведите степень многочлена n <= %d: \033[0m" % m))
 
     lagrange_res = lagrange(sorted_table, x_0, n)
@@ -108,8 +109,8 @@ def solve_request(table):
 
 
 if __name__ == '__main__':
-    a = 0.2
-    b = 0.7
+    a = -1
+    b = 4
 
     print("Задача алгебраического интерполирования\n\n"
           "Вид уравнения: 2 * sin(x) - x^2 / 2 (вариант 8)\n"
@@ -117,7 +118,7 @@ if __name__ == '__main__':
 
     m = int(input("\033[1mВведите число значений в таблице (m+1): \033[0m"))
 
-    table = tabulate_value(a, b, m, func)
+    table = tabulate_value(a, b, m - 1, func)
     print_table(table)
 
     while True:
