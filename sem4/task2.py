@@ -25,14 +25,16 @@ class Root:
 
 def func(x):
      return 2 * math.sin(x) - pow(x, 2) / 2
-    #return pow(x, 2) -3*x+5
 
 
-def tabulate_value(a, b, m, func):
+def tabulate_value(a, b, m, func, reversed=False):
     table = []
     for i in range(m + 1):
         arg = a + (b - a) * i / m
-        root = Root(arg, func(arg))
+        if reversed:
+            root = Root(func(arg), arg)
+        else:
+            root = Root(arg, func(arg))
         table.append(root)
     return table
 
@@ -67,18 +69,27 @@ def newton(table, x, n):
             res_x_multiply *= (x - table[j].arg)
         res += diff_table[0][k] * res_x_multiply
 
+    print(diff_table)
     return res
 
 
-def print_table(table, show_distance=False):
+def print_table(table, show_distance=False, reversed=False):
     if show_distance:
-        print("%-12s%-12s\033[96m%-12s" % ("x", "f(x)", "distance"))
+        if reversed:
+            print("%-12s%-12s\033[96m%-12s" % ("f(x)", "x", "distance"))
+        else:
+            print("%-12s%-12s\033[96m%-12s" % ("x", "f(x)", "distance"))
+
         print("%-12s%-12s%-12s" % ("--------", "--------", "--------"))
 
         for root in table:
             print("\033[0m%-12.9f%-12.9f\033[96m%-12.9f" % (root.arg, root.value, root.distance))
     else:
-        print("%-9s%-9s" % ("x", "f(x)"))
+        if reversed:
+            print("%-9s%-9s" % ("f(x)", "x"))
+        else:
+            print("%-9s%-9s" % ("x", "f(x)"))
+
         print("%-9s%-9s" % ("--------", "--------"))
 
         for root in table:
