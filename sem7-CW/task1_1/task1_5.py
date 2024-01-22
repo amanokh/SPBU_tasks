@@ -1,13 +1,37 @@
+import commons
+
+commons.eps = 1e-3
+
 from commons import *
 
 
-def simple_iterations_optimal(u_init, tau, std_output=True):
+def theta(n):
+    if n == 1:
+        return [1]
+
+    ans = []
+
+    for i in range(n // 2):
+        ans.append(theta(n // 2)[i])
+        ans.append(2 * n - theta(n // 2)[i])
+
+    return ans
+
+
+def tau(k, n):
+    s = np.cos(np.pi * theta(n)[k] / (2 * n))
+    return 2 / (delta(h_x, h_y) + sigma(h_x, h_y) + s * (delta(h_x, h_y) - sigma(h_x, h_y)))
+
+
+def chebyshev(u_init, std_output=True):
     if std_output:
-        print("* Метод простой итерации с оптимальным параметром*\n")
+        print("* Итерационный метод с чебышевским набором параметров *\n")
 
-    m = math.ceil(math.log(1 / eps) / (2 * sigma(h_x, h_y) / delta(h_x, h_y)))
+    p = 4
+    k = 0
 
-    U_old = np.copy(u_init)
+    m = math.ceil(math.log(2 / eps) / (2 * math.sqrt(sigma(h_x, h_y) / delta(h_x, h_y))))
+
     U = np.copy(u_init)
 
     while norm(U - U_precise) / norm(U_init - U_precise) >= eps:
@@ -15,22 +39,17 @@ def simple_iterations_optimal(u_init, tau, std_output=True):
 
         for i in range(1, x_N):
             for j in range(1, y_N):
-                U_new[i, j] = (U[i, j] + tau * (
+                U_new[i, j] = U[i, j] + tau(k % p, p) * (
                         (U[i + 1][j] - U[i][j]) / h_x ** 2 -
                         (U[i][j] - U[i - 1][j]) / h_x ** 2 +
                         (U[i][j + 1] - U[i][j]) / h_y ** 2 -
                         (U[i][j] - U[i][j - 1]) / h_y ** 2
-                ))
+                ) / (2 / h_x ** 2 + 2 / h_y ** 2)
 
         discrepancy = dscr(U_new, h_x, h_y)
         rel_error = norm(U_new - U_precise) / norm(u_init - U_precise)
         abs_error = norm(U_new - U_precise)
         abs_error_neighbor = norm(U_new - U)
-
-        if norm(U - U_old) != 0:
-            ro_k = norm(U_new - U) / norm(U - U_old)
-        else:
-            ro_k = '---'
 
         table.loc[len(table) + 1] = [discrepancy,
                                      discrepancy / discrepancy_first,
@@ -38,14 +57,13 @@ def simple_iterations_optimal(u_init, tau, std_output=True):
                                      rel_error,
                                      abs_error_neighbor,
                                      r(h_x, h_y) * abs_error_neighbor / (1 - r(h_x, h_y)),
-                                     ro_k]
+                                     '---']
 
-        U_old = np.copy(U)
         U = np.copy(U_new)
+        k += 1
 
     if std_output:
         print('Теор. кол-во итераций: ', m)
-        print("tau: ", tau)
         print(table)
 
         print('\nЧисленное решение:\n', U.T)
@@ -56,6 +74,4 @@ def simple_iterations_optimal(u_init, tau, std_output=True):
 
 if __name__ == '__main__':
     print_common_info()
-
-    tau = 2 / (sigma(h_x, h_y) + delta(h_x, h_y))
-    simple_iterations_optimal(U_init, tau)
+    chebyshev(U_init)

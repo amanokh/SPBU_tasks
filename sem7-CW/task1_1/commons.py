@@ -37,19 +37,18 @@ U_init[-1, :] = U_precise[-1, :]
 U_init[:, 0] = U_precise[:, 0]
 U_init[:, -1] = U_precise[:, -1]
 
-
 h_x = l_x / x_N
 h_y = l_y / y_N
 
 
 def sigma(h_x, h_y):
-    return c_1 * 4 / (h_x ** 2) * math.sin(math.pi * h_x / (2 * l_x)) ** 2 + d_1 * 4 / (h_y ** 2) * math.sin(
-        math.pi * h_y / (2 * l_y)) ** 2
+    return (c_1 * 4 / (h_x ** 2) * math.sin(math.pi * h_x / (2 * l_x)) ** 2 +
+            d_1 * 4 / (h_y ** 2) * math.sin(math.pi * h_y / (2 * l_y)) ** 2)
 
 
 def delta(h_x, h_y):
-    return c_2 * 4 / (h_x ** 2) * math.cos(math.pi * h_x / (2 * l_x)) ** 2 + d_2 * 4 / (h_y ** 2) * math.cos(
-        math.pi * h_y / (2 * l_y)) ** 2
+    return (c_2 * 4 / (h_x ** 2) * math.cos(math.pi * h_x / (2 * l_x)) ** 2 +
+            d_2 * 4 / (h_y ** 2) * math.cos(math.pi * h_y / (2 * l_y)) ** 2)
 
 
 def r(h_x, h_y):
@@ -71,6 +70,20 @@ def dscr(U, h_x, h_y):
                                  (U[i][j + 1] - U[i][j]) / (h_y ** 2) - \
                                  (U[i][j] - U[i][j - 1]) / (h_y ** 2)
     return norm(LuResultGrid)
+
+
+def meas_k2(U, h_x, h_y):
+    x_nods = len(U)
+    y_nods = len(U[0])
+    LuResultGrid = np.zeros((x_nods, y_nods))
+    for i in range(1, x_nods - 1):
+        for j in range(1, y_nods - 1):
+            a = (U[i][j] - U[i - 1][j]) / h_x ** 2
+            b = (U[i + 1][j] - U[i][j]) / h_x ** 2
+            c = (U[i][j] - U[i][j - 1]) / h_y ** 2
+            d = (U[i][j + 1] - U[i][j]) / h_y ** 2
+            LuResultGrid[i][j] = b - a + d - c
+    return LuResultGrid
 
 
 table = pd.DataFrame(

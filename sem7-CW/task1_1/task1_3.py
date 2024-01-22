@@ -47,7 +47,7 @@ def zeidel(u_init, std_output=True):
         U = np.copy(U_new)
 
     if std_output:
-        print('Кол-во итераций: ', m)
+        print('Теор. кол-во итераций: ', m)
         print(table)
 
         print('\nЧисленное решение:\n', U.T)
