@@ -1,7 +1,3 @@
-import commons
-
-commons.eps = 1e-3
-
 from commons import *
 
 
@@ -23,14 +19,21 @@ def tau(k, n):
     return 2 / (delta(h_x, h_y) + sigma(h_x, h_y) + s * (delta(h_x, h_y) - sigma(h_x, h_y)))
 
 
-def chebyshev(u_init, std_output=True):
+def triangle_chebyshev(u_init, std_output=True):
     if std_output:
-        print("* Итерационный метод с чебышевским набором параметров *\n")
+        print("* Попеременно-треугольный итерационный метод с чебышевским набором параметров *\n")
 
-    p = 4
     k = 0
+    p = 4
+    omega2 = 2 / np.sqrt(sigma(h_x, h_y) * delta(h_x, h_y))
 
-    m = math.ceil(math.log(2 / eps) / (2 * math.sqrt(sigma(h_x, h_y) / delta(h_x, h_y))))
+    kappa1 = omega2 / h_x ** 2
+    kappa2 = omega2 / h_y ** 2
+
+    w_a = np.zeros((x_N + 1, y_N + 1))
+    w_k = np.zeros((x_N + 1, y_N + 1))
+
+    m = math.ceil(math.log(1 / eps) / r(h_x, h_y))
 
     U = np.copy(u_init)
 
@@ -39,12 +42,19 @@ def chebyshev(u_init, std_output=True):
 
         for i in range(1, x_N):
             for j in range(1, y_N):
-                U_new[i, j] = U[i, j] + tau(k % p, p) * (
-                        (U[i + 1][j] - U[i][j]) / h_x ** 2 -
-                        (U[i][j] - U[i - 1][j]) / h_x ** 2 +
-                        (U[i][j + 1] - U[i][j]) / h_y ** 2 -
-                        (U[i][j] - U[i][j - 1]) / h_y ** 2
-                ) / (2 / h_x ** 2 + 2 / h_y ** 2)
+                a = kappa1 * w_a[i - 1][j] + kappa2 * w_a[i][j - 1] + meas_k2(U, h_x, h_y)[i][j]
+                b = 1 + kappa1 + kappa2
+                w_a[i][j] = a / b
+
+        for i in range(x_N - 1, 0, -1):
+            for j in range(y_N - 1, 0, -1):
+                a = kappa1 * w_k[i + 1][j] + kappa2 * w_k[i][j + 1] + w_a[i][j]
+                b = 1 + kappa1 + kappa2
+                w_k[i][j] = a / b
+
+        for i in range(1, x_N):
+            for j in range(1, y_N):
+                U_new[i][j] = U[i][j] + tau(k % p, p) * w_k[i][j]
 
         discrepancy = dscr(U_new, h_x, h_y)
         rel_error = norm(U_new - U_precise) / norm(u_init - U_precise)
@@ -74,4 +84,4 @@ def chebyshev(u_init, std_output=True):
 
 if __name__ == '__main__':
     print_common_info()
-    chebyshev(U_init)
+    triangle_chebyshev(U_init)

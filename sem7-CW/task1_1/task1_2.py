@@ -51,7 +51,7 @@ def simple_iterations_optimal(u_init, tau, std_output=True):
         print('\nЧисленное решение:\n', U.T)
         print('\nТочное решение:\n', U_precise.T)
 
-    return U
+    return U, table
 
 
 if __name__ == '__main__':
