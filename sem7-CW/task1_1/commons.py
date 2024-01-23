@@ -17,7 +17,7 @@ l_y = np.pi
 
 # кол-во разбиений
 x_N = 5
-y_N = 5
+y_N = 15
 
 xs = np.linspace(0, l_x, x_N + 1)
 ys = np.linspace(0, l_y, y_N + 1)
