@@ -7,6 +7,9 @@ def zeidel(u_init, std_output=True):
     if std_output:
         print("* Метод Зейделя *\n")
 
+    table = pd.DataFrame(
+        columns=["||F - AUk||", "rel.d.", "||Uk − u*||", "rel.error", "||Uk − Uk-1||", "apost.est.", "ro_k"])
+
     m = math.ceil(math.log(1 / eps) / (4 * sigma(h_x, h_y) / delta(h_x, h_y)))
 
     U_old = np.copy(u_init)

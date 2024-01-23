@@ -9,6 +9,9 @@ def up_relax(u_init, std_output=True):
     if std_output:
         print("* Метод верхней релаксации *\n")
 
+    table = pd.DataFrame(
+        columns=["||F - AUk||", "rel.d.", "||Uk − u*||", "rel.error", "||Uk − Uk-1||", "apost.est.", "ro_k"])
+
     m = math.ceil(math.log(1 / eps) / math.sqrt(sigma(h_x, h_y) / delta(h_x, h_y)))
     omega = 2 / (1 + np.sqrt(1 - r(h_x, h_y) ** 2))
 

@@ -5,6 +5,9 @@ def simple_iterations(u_init, std_output=True):
     if std_output:
         print("* Метод простой итерации *")
 
+    table = pd.DataFrame(
+        columns=["||F - AUk||", "rel.d.", "||Uk − u*||", "rel.error", "||Uk − Uk-1||", "apost.est.", "ro_k"])
+
     m = math.ceil(math.log(1 / eps) / (2 * sigma(h_x, h_y) / delta(h_x, h_y)))
 
     U_old = np.copy(u_init)

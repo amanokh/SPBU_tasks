@@ -27,6 +27,9 @@ def chebyshev(u_init, std_output=True):
     if std_output:
         print("* Итерационный метод с чебышевским набором параметров *\n")
 
+    table = pd.DataFrame(
+        columns=["||F - AUk||", "rel.d.", "||Uk − u*||", "rel.error", "||Uk − Uk-1||", "apost.est."])
+
     p = 4
     k = 0
 
@@ -56,8 +59,7 @@ def chebyshev(u_init, std_output=True):
                                      abs_error,
                                      rel_error,
                                      abs_error_neighbor,
-                                     r(h_x, h_y) * abs_error_neighbor / (1 - r(h_x, h_y)),
-                                     '---']
+                                     r(h_x, h_y) * abs_error_neighbor / (1 - r(h_x, h_y))]
 
         U = np.copy(U_new)
         k += 1

@@ -86,8 +86,6 @@ def meas_k2(U, h_x, h_y):
     return LuResultGrid
 
 
-table = pd.DataFrame(
-    columns=["||F - AUk||", "rel.d.", "||Uk − u*||", "rel.error", "||Uk − Uk-1||", "apost.est.", "ro_k"])
 discrepancy_first = dscr(U_init, h_x, h_y)
 measure_approximation = dscr(U_precise, h_x, h_y)
 

@@ -8,6 +8,9 @@ def triangle(u_init, std_output=True):
     if std_output:
         print("* Попеременно-треугольный итерационный метод *\n")
 
+    table = pd.DataFrame(
+        columns=["||F - AUk||", "rel.d.", "||Uk − u*||", "rel.error", "||Uk − Uk-1||", "apost.est."])
+
     etta = sigma(h_x, h_y) / delta(h_x, h_y)
     omega2 = 2 / np.sqrt(sigma(h_x, h_y) * delta(h_x, h_y))
     gamma1 = sigma(h_x, h_y) / (2 + 2 * np.sqrt(etta))
@@ -53,8 +56,7 @@ def triangle(u_init, std_output=True):
                                      abs_error,
                                      rel_error,
                                      abs_error_neighbor,
-                                     r(h_x, h_y) * abs_error_neighbor / (1 - r(h_x, h_y)),
-                                     '---']
+                                     r(h_x, h_y) * abs_error_neighbor / (1 - r(h_x, h_y))]
 
         U = np.copy(U_new)
 
